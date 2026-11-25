@@ -118,6 +118,20 @@ def _cmd_convert(args: argparse.Namespace) -> int:
         print(f"Error: input path '{inp}' not found.", file=sys.stderr)
         return 1
 
+    if src == "coco" and inp.is_dir():
+        print(
+            f"Error: input path '{inp}' is a directory, expected a COCO JSON file.",
+            file=sys.stderr,
+        )
+        return 1
+
+    if src in ("yolo", "voc") and not inp.is_dir():
+        print(
+            f"Error: input path '{inp}' must be a directory for {src.upper()} source format.",
+            file=sys.stderr,
+        )
+        return 1
+
     if src == "coco":
         coco = validate_coco_file(inp)
         paths = coco_to_yolo(coco, out) if dst == "yolo" else coco_to_voc(coco, out)
